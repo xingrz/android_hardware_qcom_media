@@ -7999,8 +7999,8 @@ void venc_dev::venc_dev_vqzip::deinit()
 {
     if (mLibHandle) {
         pthread_mutex_lock(&lock);
-        dlclose(mLibHandle);
         mVQZIPDeInit(mVQZIPHandle);
+        dlclose(mLibHandle);
         mLibHandle = NULL;
         mVQZIPHandle = NULL;
         mVQZIPInit = NULL;
