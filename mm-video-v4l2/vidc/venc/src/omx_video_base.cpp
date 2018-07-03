@@ -108,9 +108,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #endif
 
-// Gralloc flag to indicate UBWC
-#define GRALLOC1_CONSUMER_USAGE_UBWC_FLAG GRALLOC1_CONSUMER_USAGE_PRIVATE_0
-
 typedef struct OMXComponentCapabilityFlagsType {
     ////////////////// OMX COMPONENT CAPABILITY RELATED MEMBERS
     OMX_U32 nSize;
@@ -1598,7 +1595,7 @@ OMX_ERRORTYPE  omx_video::get_parameter(OMX_IN OMX_HANDLETYPE     hComp,
                     // At the same time, FWK needs original WxH for various purposes
                     // Sending input WxH as output port def WxH to FWK
                     if (m_sOutPortDef.format.video.eCompressionFormat ==
-                            OMX_VIDEO_CodingHEIC) {
+                            OMX_VIDEO_CodingImageHEIC) {
                         portDefn->format.video.nFrameWidth =
                             m_sInPortDef.format.video.nFrameWidth;
                         portDefn->format.video.nFrameHeight =
@@ -2138,10 +2135,10 @@ OMX_ERRORTYPE  omx_video::get_parameter(OMX_IN OMX_HANDLETYPE     hComp,
                 OMX_U32 eProfile = 0;
                 DEBUG_PRINT_LOW("get_parameter: OMX_IndexParamConsumerUsageBits");
                 bool hevc = dev_get_hevc_profile(&eProfile);
+                dev_get_consumer_usage(&m_sParamConsumerUsage);
                 if(hevc && eProfile == (OMX_U32)OMX_VIDEO_HEVCProfileMain10HDR10) {
                     DEBUG_PRINT_INFO("Setting TP10 consumer usage bits");
                     m_sParamConsumerUsage |= GRALLOC1_CONSUMER_USAGE_PRIVATE_10BIT_TP;
-                    m_sParamConsumerUsage |= GRALLOC1_CONSUMER_USAGE_UBWC_FLAG;
                 }
                 memcpy(consumerUsage, &m_sParamConsumerUsage, sizeof(m_sParamConsumerUsage));
                 break;
@@ -5318,7 +5315,8 @@ OMX_ERRORTYPE omx_video::push_input_buffer(OMX_HANDLETYPE hComp)
                 handle->format == QOMX_COLOR_FORMATYUV420SemiPlanarP010Venus ||
                 handle->format == QOMX_COLOR_Format32bitRGBA8888Compressed ||
                 handle->format == HAL_PIXEL_FORMAT_YCbCr_420_TP10_UBWC ||
-                handle->format == HAL_PIXEL_FORMAT_NV21_ZSL);
+                handle->format == HAL_PIXEL_FORMAT_NV21_ZSL ||
+                handle->format == QOMX_COLOR_FormatYVU420SemiPlanar);
 
             Input_pmem_info.buffer = media_buffer;
             Input_pmem_info.fd = handle->fd;

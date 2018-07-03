@@ -48,7 +48,6 @@ IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <inttypes.h>
 #include <cstddef>
 #include <cutils/atomic.h>
-#include <qdMetaData.h>
 #include <color_metadata.h>
 #define STRINGIFY_ENUMS
 #include "media/hardware/VideoAPI.h"
@@ -1423,6 +1422,7 @@ class omx_vdec: public qc_omx_component
 public:
         bool is_down_scalar_enabled;
         bool m_is_split_mode;
+        bool m_buffer_error;
 };
 
 enum instance_state {
